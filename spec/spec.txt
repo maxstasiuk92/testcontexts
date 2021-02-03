@@ -1,0 +1,65 @@
+----Assemble context----
+* mandatory! specify class-path with frameworks
+* enum classes, packages
+* which beans should be replaced by supplied objects
+    - supplied should have scope=singleton or be cloneable
+* allow to deploy to embedded tomcat
+* contexts are created in separate threads
+    - provide methods for synchronization
+    - thread should not die right after creation
+
+----Settings for test----
+@ContextConfiguration: v1
+@ActiveProfiles: v1
+@TestPropertySource: v1
+@RecordApplicationEvents
+@Commit
+@Rollback
+@BeforeTransaction
+@AfterTransaction
+
+Potential settings for test
+@DynamicPropertySource
+@WebAppConfiguration
+@ContextHierarchy
+@TestExecutionListeners
+@Sql
+@SqlConfig
+@SqlMergeMode
+@SqlGroup
+
+----Questions----
+Should contexts be beans? Will @DirtiesContext have any sense?
+Some configurations require spring's classes, how to deal with this?
+
+----Flow----
++if I do not chain class loaders manually, what CL becomes parent, how to set only my
+    Ans: from static scl; Load class ClassLoader once more and set field or create some proxy
+
++meaning of test annotations: inherit locations/properties and other
+context hierarchy
+create simple context using .class + objects (if possible)
+what if tomcat is on CP? do I have control after context creation? how/when tomcat is launched?
+read about bean definitions, processors
+    - how to get all impl. interfaces, actual class name, how to modify that, check that not overridden
+    - how to check, that required
+    - how to get bean+factory post-processors and their order, how to modify it, check that not overridden
+    - how to configure active profile, check that not overridden
+    - how to override properties, check that not overridden
+learn all about web context, multiple root contexts
+learn about bean scopes
+
+About classloaders
+difference in interaction of system with parallel capable and not parallel capable CL?
+meaning of fields:
+    parallelLockMap = new ConcurrentHashMap<>();
+    package2certs = new ConcurrentHashMap<>();
+    assertionLock = new Object();
+Ans: In static block. ClassLoader.registerAsParallelCapable - when to invoke?
+how to sync. on CL and class name?
+how to Process modules?
+
+Info/limitations
+allow to create classloaders
+same System properties for all
+same java api for all - java version in test should be greater, than in microservices
